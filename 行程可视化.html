@@ -263,9 +263,115 @@
         }
 
         .label-toggle:hover { background: rgba(0, 212, 255, 0.2); }
+
+        /* CTF 验证界面 */
+        .ctf-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            font-family: 'Courier New', monospace;
+        }
+
+        .ctf-overlay.hidden { display: none; }
+
+        .ctf-title {
+            font-size: 24px;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00d4ff;
+            letter-spacing: 3px;
+        }
+
+        .ctf-hint {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00d4ff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            max-width: 500px;
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .ctf-hint code {
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .ctf-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00d4ff;
+            padding: 12px 20px;
+            font-size: 18px;
+            color: #fff;
+            border-radius: 8px;
+            width: 250px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .ctf-input:focus {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .ctf-submit {
+            margin-top: 20px;
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ctf-submit:hover {
+            background: #00ff88;
+            box-shadow: 0 0 20px #00ff88;
+        }
+
+        .ctf-error {
+            color: #ff4444;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .ctf-success {
+            color: #00ff88;
+            font-size: 18px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
+    <!-- CTF 验证界面 -->
+    <div class="ctf-overlay" id="ctfOverlay">
+        <div class="ctf-title">🔒 CTF CHALLENGE</div>
+        <div class="ctf-hint">
+            <p>📍 <strong>Challenge:</strong> 找到高铁行程的起点站</p>
+            <p>🗺️ <strong>Hint:</strong> 代码中隐藏了28个站点，起点站的名称经过 <code>Base64</code> 编码后是： <code>5byg5Yqq5biB</code></p>
+            <p>💡 <strong>Task:</strong> 解码得到起点站名称，输入正确答案</p>
+        </div>
+        <input type="text" class="ctf-input" id="ctfInput" placeholder="输入答案...">
+        <button class="ctf-submit" onclick="checkAnswer()">提交</button>
+        <div class="ctf-error" id="ctfError"></div>
+    </div>
+
     <div class="loading" id="loading">
         <div class="loading-text">LOADING EARTH...</div>
     </div>
@@ -1099,7 +1205,37 @@
             renderer.render(scene, camera);
         }
 
-        init();
+        // CTF 验证函数
+        function checkAnswer() {
+            const input = document.getElementById('ctfInput').value.trim();
+            const errorDiv = document.getElementById('ctfError');
+
+            // Base64解码
+            let decoded = '';
+            try {
+                decoded = atob('5byg5Yqq5biB');
+            } catch(e) {
+                decoded = '毕节';
+            }
+
+            if (input === '毕节' || input === decoded) {
+                document.getElementById('ctfOverlay').classList.add('hidden');
+                // 验证通过，初始化地球仪
+                init();
+            } else {
+                errorDiv.textContent = '❌ 答案错误！Hint: 这是高铁行程的起点站';
+            }
+        }
+
+        // 回车提交
+        document.getElementById('ctfInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // 页面加载时先不初始化，等待验证
+        // init();
     </script>
 </body>
 </html>
