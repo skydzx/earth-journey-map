@@ -1033,7 +1033,7 @@
 
             // 相机位置靠近站点，实现放大效果
             // 距离越小，放大倍数越大
-            const stationPos = latLonToVector3(station.lat, station.lon, 2.0);
+            const stationPos = latLonToVector3(station.lat, station.lon, 1.5);
             animateCameraTo(stationPos);
         }
 
@@ -1057,7 +1057,7 @@
 
         function rotateToChina() {
             // 更靠近中国，可以看到只显示中国版图
-            const chinaPos = new THREE.Vector3(1.25, 0.5, 1.8);
+            const chinaPos = new THREE.Vector3(1.2, 0.4, 1.5);
             animateCameraTo(chinaPos);
         }
 
